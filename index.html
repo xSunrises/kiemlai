@@ -1,78 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Google Drive File IDs</title>
-    <script src="https://apis.google.com/js/api.js"></script>
-</head>
-<body>
-    <button id="authorize_button">Authorize</button>
-    <button id="signout_button" style="display:none">Sign Out</button>
-    <div id="content"></div>
 
-    <script>
-        const CLIENT_ID = '1079725070678-v55clugr7j8dq3je217dogdmja6oj9bo.apps.googleusercontent.com';
-        const API_KEY = 'AIzaSyBrn9s9X6IEk_cO-layId-3ml-yVAt89a4';
-        const FOLDER_ID = '1i_L_ia1MKzzwGOAH8S7sG2FyAmbeUTAl';
-
-        const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
-        const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
-
-        function handleClientLoad() {
-            gapi.load('client:auth2', initClient);
-        }
-
-        function initClient() {
-            gapi.client.init({
-                apiKey: API_KEY,
-                clientId: CLIENT_ID,
-                discoveryDocs: DISCOVERY_DOCS,
-                scope: SCOPES
-            }).then(() => {
-                gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-                updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-
-                document.getElementById('authorize_button').onclick = handleAuthClick;
-                document.getElementById('signout_button').onclick = handleSignoutClick;
-            });
-        }
-
-        function updateSigninStatus(isSignedIn) {
-            if (isSignedIn) {
-                document.getElementById('authorize_button').style.display = 'none';
-                document.getElementById('signout_button').style.display = 'block';
-                listFiles();
-            } else {
-                document.getElementById('authorize_button').style.display = 'block';
-                document.getElementById('signout_button').style.display = 'none';
-            }
-        }
-
-        function handleAuthClick(event) {
-            gapi.auth2.getAuthInstance().signIn();
-        }
-
-        function handleSignoutClick(event) {
-            gapi.auth2.getAuthInstance().signOut();
-        }
-
-        function listFiles() {
-            gapi.client.drive.files.list({
-                'q': `'${FOLDER_ID}' in parents`,
-                'fields': "files(id, name)"
-            }).then(response => {
-                const files = response.result.files;
-                const content = document.getElementById('content');
-                content.innerHTML = files.length ? 
-                    files.map(file => `<p>${file.name} (ID: ${file.id})</p>`).join('') : 
-                    '<p>No files found.</p>';
-            });
-        }
-
-        handleClientLoad();
-    </script>
-    <p>asdas</p>
-</body>
+<html>
+  <body>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="1079725070678-v55clugr7j8dq3je217dogdmja6oj9bo.apps.googleusercontent.com">
+    <div class="g-signin2" data-onsuccess="handleCredentialResponse"></div>
+  </body>
 </html>
 
